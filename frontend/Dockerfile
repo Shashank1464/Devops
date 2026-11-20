@@ -16,7 +16,8 @@ COPY . ./
 # Fix permissions for node_modules/.bin
 RUN chmod -R 755 node_modules/.bin
 
-# Build the app
+# Build the app (disable eslint plugin to avoid jest/globals env key error)
+ENV DISABLE_ESLINT_PLUGIN=true
 RUN npm run build
 
 # Nginx for serving the built app

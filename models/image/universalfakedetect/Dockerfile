@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir /app/sdk/
 RUN pip install --no-cache-dir --upgrade pip "setuptools<70" wheel
 
 RUN pip install --no-cache-dir \
-    torch==2.0.1 \
-    torchvision==0.15.2 \
+    torch==2.1.0 \
+    torchvision==0.16.0 \
     --index-url https://download.pytorch.org/whl/cpu
 
 COPY models/image/universalfakedetect/requirements.txt /app/requirements.txt

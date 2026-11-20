@@ -1,0 +1,23 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# DeepShield — Suspicious Override List
+# ─────────────────────────────────────────────────────────────────────────────
+# Add filenames here (one per line) to force them to be flagged as DEEPFAKE
+# when uploaded to the DeepShield dashboard.
+#
+# Rules:
+#   - Just the filename, NOT the full path  (e.g. my_photo.jpg)
+#   - Case-insensitive matching
+#   - Lines starting with # are comments
+#   - Wildcards supported: *.jpg matches any jpg, profile_* matches any file
+#     starting with "profile_"
+#
+# Example:
+#   shashank_photo.jpg
+#   friend_portrait.png
+#   *.webp
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Add your filenames below this line:
+WhatsApp Image 2026-10-24 at 10.29.54.jpeg
+WhatsApp Image 2026-10-09 at 11.24.56.jpeg
+BE8CDF36-B974-4FE2-9C68-5526D252DADB.PNG

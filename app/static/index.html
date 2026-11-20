@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepShield - Deepfake Photo & Video Detector</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="stars-overlay"></div>
+    
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="dashboard-header">
+            <div class="logo-area">
+                <div class="shield-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <div class="title-group">
+                    <h1>DEEPSHIELD</h1>
+                    <span class="sub-title">Forensic Media Tampering Detector</span>
+                </div>
+            </div>
+            <div class="header-status">
+                <div class="status-indicator">
+                    <span class="ping-dot"></span>
+                    <span class="status-label">ENGINE SECURE</span>
+                </div>
+                <div class="system-time" id="system-time">14:30:16</div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-grid">
+            
+            <!-- LEFT PANEL: Upload & Status -->
+            <section class="panel-card upload-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">⚙</span>
+                    <h2>CONTROL GATEWAY</h2>
+                </div>
+                
+                <div class="drop-zone" id="drop-zone">
+                    <div class="drop-zone-content">
+                        <div class="cloud-icon">
+                            <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                            </svg>
+                        </div>
+                        <h3>Upload Target File</h3>
+                        <p>Drag & drop photo or video, or browse local files</p>
+                        <span class="file-hint">Supports JPEG, PNG, MP4, AVI, MOV</span>
+                        <input type="file" id="file-input" accept="image/*,video/*" style="display: none;">
+                        <button class="btn btn-primary">Browse Files</button>
+                    </div>
+                    <div class="scanning-bar"></div>
+                </div>
+
+                <!-- Analysis Log & Progress -->
+                <div class="analysis-status-box" id="analysis-status-box" style="display: none;">
+                    <div class="progress-container">
+                        <div class="progress-info">
+                            <span id="progress-text">Initializing Scanners...</span>
+                            <span id="progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live System Terminal Log -->
+                <div class="terminal-log-container">
+                    <div class="terminal-header">
+                        <span>FORENSIC TERMINAL LOG</span>
+                        <span class="terminal-cursor">█</span>
+                    </div>
+                    <div class="terminal-body" id="terminal-body">
+                        <div class="terminal-line">[INFO] System booted. Detectors ready.</div>
+                        <div class="terminal-line">[INFO] Waiting for file ingestion...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CENTER PANEL: Primary Media Visualizer -->
+            <section class="panel-card visualizer-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">👁</span>
+                    <h2>DIAGNOSTIC VISUALIZER</h2>
+                    <div class="visualizer-tabs" id="visualizer-tabs" style="display: none;">
+                        <button class="tab-btn active" data-tab="original">ORIGINAL</button>
+                        <button class="tab-btn" data-tab="ela">ELA SCAN</button>
+                        <button class="tab-btn" data-tab="fft">FFT SPECTRUM</button>
+                    </div>
+                </div>
+
+                <div class="visualizer-viewport">
+                    <!-- Placeholder when no media uploaded -->
+                    <div class="viewport-placeholder" id="viewport-placeholder">
+                        <div class="radar-box">
+                            <div class="radar-circle circle-1"></div>
+                            <div class="radar-circle circle-2"></div>
+                            <div class="radar-circle circle-3"></div>
+                            <div class="radar-sweep"></div>
+                            <span class="radar-text">NO TARGET INSTALLED</span>
+                        </div>
+                    </div>
+
+                    <!-- Target Display Area -->
+                    <div class="media-container" id="media-container" style="display: none;">
+                        <!-- Uploaded image / Video will go here -->
+                        <img id="view-image" src="" alt="Target Image" style="display: none;">
+                        <video id="view-video" controls style="display: none;"></video>
+                        <canvas id="landmark-canvas"></canvas>
+                        
+                        <!-- Side-by-side Overlay ELA/FFT images -->
+                        <img id="ela-image" class="overlay-image" src="" alt="ELA Visual" style="display: none;">
+                        <img id="fft-image" class="overlay-image" src="" alt="FFT Visual" style="display: none;">
+                    </div>
+                </div>
+
+                <!-- Video Timeline Control (Visible only for videos) -->
+                <div class="video-timeline-panel" id="video-timeline-panel" style="display: none;">
+                    <div class="timeline-slider-wrapper">
+                        <span class="timeline-time" id="timeline-time-current">0:00</span>
+                        <input type="range" id="timeline-slider" min="0" max="100" value="0">
+                        <span class="timeline-time" id="timeline-time-total">0:00</span>
+                    </div>
+                    <div class="timeline-labels">
+                        <span>TIMELINE RISK DISTRIBUTION</span>
+                    </div>
+                    <div class="timeline-canvas-container">
+                        <canvas id="timeline-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: Statistical Threat Report -->
+            <section class="panel-card report-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">📊</span>
+                    <h2>FORENSIC ASSESSMENT</h2>
+                </div>
+
+                <div class="report-content" id="report-content-placeholder">
+                    <div class="empty-report-info">
+                        <p>Ingest a media file to populate forensic analytics and threat level assessments.</p>
+                    </div>
+                </div>
+
+                <div class="report-content" id="report-content-data" style="display: none;">
+                    <!-- Verdict & Threat Score -->
+                    <div class="assessment-summary">
+                        <div class="threat-gauge-box">
+                            <svg class="gauge-svg" viewBox="0 0 100 100">
+                                <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                                <circle class="gauge-fill" id="gauge-fill" cx="50" cy="50" r="40"></circle>
+                            </svg>
+                            <div class="gauge-text">
+                                <span id="gauge-percent">0%</span>
+                                <span class="gauge-label">THREAT</span>
+                            </div>
+                        </div>
+                        
+                        <div class="verdict-box">
+                            <span class="verdict-title">INTEGRITY VERDICT</span>
+                            <h3 id="verdict-label" class="verdict-safe">AUTHENTIC</h3>
+                        </div>
+                    </div>
+
+                    <!-- Details Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span>Spectral Inconsistencies (FFT)</span>
+                                <strong id="val-fft">0.0%</strong>
+                            </div>
+                            <div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-fft" style="width: 0%;"></div></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span>Compression Disparity (ELA)</span>
+                                <strong id="val-ela">0.0%</strong>
+                            </div>
+                            <div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-ela" style="width: 0%;"></div></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-meta">
+                                <span>Geometric Asymmetry</span>
+                                <strong id="val-geom">0.0%</strong>
+                            </div>
+                            <div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-geom" style="width: 0%;"></div></div>
+                        </div>
+
+                        <div class="stat-card" id="temporal-card" style="display: none;">
+                            <div class="stat-meta">
+                                <span>Temporal Flickering (Jitter)</span>
+                                <strong id="val-temporal">0.0%</strong>
+                            </div>
+                            <div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-temporal" style="width: 0%;"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Frequency Profile Graph -->
+                    <div class="chart-container">
+                        <h3>FREQUENCY DECAY DEVIATION</h3>
+                        <div class="canvas-holder">
+                            <canvas id="radial-chart"></canvas>
+                        </div>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-color real"></span>Natural Face</span>
+                            <span class="legend-item"><span class="legend-color sample"></span>Target Sample</span>
+                        </div>
+                    </div>
+
+                    <!-- Info Meta list -->
+                    <div class="meta-list">
+                        <div class="meta-row">
+                            <span class="meta-lbl">Target Resolution:</span>
+                            <span class="meta-val" id="meta-resolution">-</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-lbl">Faces Detected:</span>
+                            <span class="meta-val" id="meta-faces">-</span>
+                        </div>
+                        <div class="meta-row" id="meta-row-duration" style="display: none;">
+                            <span class="meta-lbl">Video Duration:</span>
+                            <span class="meta-val" id="meta-duration">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+    </div>
+    <script src="/static/app.js"></script>
+</body>
+</html>
